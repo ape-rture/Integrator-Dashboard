@@ -55,9 +55,9 @@ tx_per_day_hist = hist(df, 'sending_date', 'transactionId',  x_name = 'Day', y_n
 volume_per_day_hist = hist(df, 'sending_date', 'sending_amountUSD', x_name = 'Day', y_name = 'USD', method='sum', head=None, date_range=True, show=False, save=False) # Volume per day
 tool_hist = hist(df, 'tool', 'transactionId', x_name = 'Tool',  head=10, show=False, save=False) # tool counts
 send_token_hist = hist(df, 'sending_token.symbol', 'transactionId', x_name = 'Token sent',  head=10, show=False, save=False) # coins send counts
-receive_token_hist = hist(df, 'receiving_token.symbol', 'transactionId', x_name = 'Token Received',  head=10, show=False, save=False) # coins received counts
+receive_token_hist = hist(df, 'receiving_token.symbol', 'transactionId', x_name = 'Token received',  head=10, show=False, save=False) # coins received counts
 send_token_sum_hist = hist(df, 'sending_token.symbol', 'sending_amountUSD',  x_name = 'Token sent',  y_name='Sum ($)', method='sum', head=10, show=False, save=False) # coins send sum
-receive_token_sum_hist = hist(df, 'receiving_token.symbol', 'receiving_amountUSD', x_name = 'Token Received', y_name='Sum ($)', method='sum', head=10, show=False, save=False) # coins received sum
+receive_token_sum_hist = hist(df, 'receiving_token.symbol', 'receiving_amountUSD', x_name = 'Token received', y_name='Sum ($)', method='sum', head=10, show=False, save=False) # coins received sum
 send_gas_token_hist = hist(df, 'sending_gasToken_chain', 'transactionId', x_name = 'Gas token',  head=10, show=False, save=False)
 receive_gas_token_hist = hist(df, 'receiving_gasToken_chain', 'transactionId', x_name = 'Gas token',  head=10, show=False, save=False)
 send_gas_token_avg_hist = hist(df, 'sending_gasToken_chain', 'sending_gasAmountUSD',  x_name = 'Gas token',  y_name='Median ($)', method='median', head=10, show=False, save=False)
