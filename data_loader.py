@@ -41,7 +41,6 @@ def call_integrator_analytics(integrator, status='DONE', from_timestamp=None, to
         results = results['transfers']
 
     except:
-        print(results)
         results = None
 
     return results
@@ -50,33 +49,35 @@ def parse_integrator_data(data):
 
     integrator_df = pd.DataFrame(data)
 
-    df_columns = ['timestamp', 'chainId','gasAmountUSD', 'amountUSD','token.symbol', 'token.name',
-           'token.coinKey', 'gasToken.name', 'gasToken.coinKey']
-    sending_df = pd.json_normalize(integrator_df['sending'])[df_columns]
-    sending_df.columns = [ 'sending_' + x for x in sending_df.columns]
+    try:
+        df_columns = ['timestamp', 'chainId','gasAmountUSD', 'amountUSD','token.symbol', 'token.name',
+               'token.coinKey', 'gasToken.name', 'gasToken.coinKey']
+        sending_df = pd.json_normalize(integrator_df['sending'])[df_columns]
+        sending_df.columns = [ 'sending_' + x for x in sending_df.columns]
 
-    receiving_df = pd.json_normalize(integrator_df['receiving'])[df_columns]
-    receiving_df.columns = [ 'receiving_' + x for x in receiving_df.columns]
+        receiving_df = pd.json_normalize(integrator_df['receiving'])[df_columns]
+        receiving_df.columns = [ 'receiving_' + x for x in receiving_df.columns]
 
-    integrator_df = integrator_df.drop(['sending', 'receiving', 'lifiExplorerLink', 'substatusMessage'], axis=1)
-    integrator_df = pd.concat([integrator_df, sending_df, receiving_df], axis=1)
+        integrator_df = integrator_df.drop(['sending', 'receiving', 'lifiExplorerLink', 'substatusMessage'], axis=1)
+        integrator_df = pd.concat([integrator_df, sending_df, receiving_df], axis=1)
 
-    # convert timesstamps
-    integrator_df['sending_datetime'] = pd.to_datetime(integrator_df['sending_timestamp'], unit='s')
-    integrator_df['sending_date'] = integrator_df['sending_datetime'].dt.date
+        # convert timesstamps
+        integrator_df['sending_datetime'] = pd.to_datetime(integrator_df['sending_timestamp'], unit='s')
+        integrator_df['sending_date'] = integrator_df['sending_datetime'].dt.date
 
-    integrator_df['receiving_datetime'] = pd.to_datetime(integrator_df['receiving_timestamp'], unit='s')
-    integrator_df['receiving_date'] = integrator_df['receiving_datetime'].dt.date
+        integrator_df['receiving_datetime'] = pd.to_datetime(integrator_df['receiving_timestamp'], unit='s')
+        integrator_df['receiving_date'] = integrator_df['receiving_datetime'].dt.date
 
-    # set types
-    integrator_df['sending_amountUSD'] =  integrator_df['sending_amountUSD'].astype(float)
-    integrator_df['receiving_amountUSD'] =  integrator_df['receiving_amountUSD'].astype(float)
-    integrator_df['sending_gasAmountUSD'] =  integrator_df['sending_gasAmountUSD'].astype(float)
-    integrator_df['receiving_gasAmountUSD'] =  integrator_df['receiving_gasAmountUSD'].astype(float)
+        # set types
+        integrator_df['sending_amountUSD'] =  integrator_df['sending_amountUSD'].astype(float)
+        integrator_df['receiving_amountUSD'] =  integrator_df['receiving_amountUSD'].astype(float)
+        integrator_df['sending_gasAmountUSD'] =  integrator_df['sending_gasAmountUSD'].astype(float)
+        integrator_df['receiving_gasAmountUSD'] =  integrator_df['receiving_gasAmountUSD'].astype(float)
 
-    integrator_df['sending_gasToken_chain'] =  integrator_df['sending_chainId'].astype(str) + ": " + integrator_df['sending_gasToken.coinKey']
-    integrator_df['receiving_gasToken_chain'] =  integrator_df['receiving_chainId'].astype(str) + ": " + integrator_df['receiving_gasToken.coinKey']
-
+        integrator_df['sending_gasToken_chain'] =  integrator_df['sending_chainId'].astype(str) + ": " + integrator_df['sending_gasToken.coinKey']
+        integrator_df['receiving_gasToken_chain'] =  integrator_df['receiving_chainId'].astype(str) + ": " + integrator_df['receiving_gasToken.coinKey']
+    except:
+        integrator_df = pd.DataFrame()
 
     return integrator_df
 
@@ -101,6 +102,10 @@ def continuous_analytics_call(integrator, start_date, end_date, status='DONE', b
 
         # parse data
         integrator_df = parse_integrator_data(result)
+
+        # if parsing the data goes wrong
+        if integrator_df.empty:
+            break
 
         # update from_timestamp
         max_timestamp = int(time.mktime(integrator_df['sending_date'].min().timetuple()))
