@@ -51,8 +51,8 @@ send_avg_gas_fee = df['sending_gasAmountUSD'].mean().round(2)
 recieve_avg_gas_fee  = df['receiving_gasAmountUSD'].mean().round(2)
 
 # charts
-tx_per_day_hist = hist(df, 'sending_date', 'transactionId',  x_name = 'Day', y_name = 'TX Count',  head=None, date_range=True, show=False, save=False) # Tx counts per day
-volume_per_day_hist = hist(df, 'sending_date', 'sending_amountUSD', x_name = 'Day', y_name = 'USD', method='sum', head=None, date_range=True, show=False, save=False) # Volume per day
+tx_per_day_hist = hist(df, 'sending_date', 'transactionId',  x_name = 'Day', y_name = 'Transfers',  head=None, date_range=True, show=False, save=False) # Tx counts per day
+volume_per_day_hist = hist(df, 'sending_date', 'sending_amountUSD', x_name = 'Day', y_name = 'Volume ($)', method='sum', head=None, date_range=True, show=False, save=False) # Volume per day
 tool_hist = hist(df, 'tool', 'transactionId', x_name = 'Tool',  head=10, show=False, save=False) # tool counts
 send_token_hist = hist(df, 'sending_token.symbol', 'transactionId', x_name = 'Token sent',  head=10, show=False, save=False) # coins send counts
 receive_token_hist = hist(df, 'receiving_token.symbol', 'transactionId', x_name = 'Token received',  head=10, show=False, save=False) # coins received counts
